@@ -27,7 +27,7 @@ Todos (seguimiento)
 - sin-responsable-service: Implementando TaskService.sinResponsable() que usa ReportService.SIN_ASIGNAR y TaskOrders.POR_FECHA. (pending)
 - sin-responsable-controller: Añadir endpoint GET /tasks/unassigned en TaskController. (pending)
 - sin-responsable-service-tests: Añadir tests unitarios en TaskServiceTest (Nested SinResponsable) que verifiquen orden y vacío; incluye el caso de orden exacto descrito. (pending)
-- sin-responsable-controller-test-slice: Añadir slice MockMvc en TaskControllerTest para GET /tasks/unassigned (200 y assigneeId null en JSON). (pending)
+- sin-responsable-controller-test-slice: Añadir slice MockMvc en TaskControllerTest para GET /tasks/unassigned. El mock debe devolver UNA sola tarea; el test comprueba solo: status 200, el id de la tarea y que assigneeId es null. No probar ni afirmar orden en el slice. El nombre del test no debe mencionar 'orden'. (pending)
 - run-tests-and-verify: Ejecutar mvn -q test y confirmar que la suite pasa. (pending)
 
 Notas y restricciones
