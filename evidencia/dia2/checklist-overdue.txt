@@ -1,100 +1,45 @@
- .../com/taskflow/controller/TaskController.java    | 16 +++++
- .../java/com/taskflow/service/TaskService.java     | 23 ++++++++
- .../com/taskflow/slice/TaskControllerTest.java     | 38 ++++++++++++
- .../java/com/taskflow/unit/TaskServiceTest.java    | 69 ++++++++++++++++++++++
- 4 files changed, 146 insertions(+)
-38	0	src/test/java/com/taskflow/slice/TaskControllerTest.java
-69	0	src/test/java/com/taskflow/unit/TaskServiceTest.java
+ specs/overdue.md                                   | 42 ++++++++++++++++++++++
+ .../com/taskflow/controller/TaskController.java    | 12 +++++++
+ .../java/com/taskflow/service/TaskService.java     | 11 ++++++
+ .../com/taskflow/slice/TaskControllerTest.java     | 20 +++++++++++
+ .../java/com/taskflow/unit/TaskServiceTest.java    | 21 +++++++++++
+ 5 files changed, 106 insertions(+)
+20	0	src/test/java/com/taskflow/slice/TaskControllerTest.java
+21	0	src/test/java/com/taskflow/unit/TaskServiceTest.java
 
-+    /** GET /tasks/overdue ÔÇö tareas vencidas de todos los proyectos, la m├ís vencida primero (S6 D├¡a 2). */
-+    /** GET /tasks/unassigned ÔÇö tareas sin responsable, por dueDate ascendente y sin fecha al final (S6 D├¡a 2). */
 +    /**
-+     * Tareas vencidas de todos los proyectos (GET /tasks/overdue, S6 D├¡a 2). La regla es la del
-+     * dominio, Task.estaVencida(); el orden, TaskOrders.POR_FECHA: la m├ís vencida primero.
++     * GET /tasks/overdue — lista las tareas vencidas de todos los proyectos. Orden por dueDate asc.
 +     */
 +    /**
-+     * Tareas sin responsable de todos los proyectos, en cualquier estado (GET /tasks/unassigned, S6
-+     * D├¡a 2). La regla es ReportService.SIN_ASIGNAR; el orden, TaskOrders.POR_FECHA: por fecha
-+     * ascendente y las que no tienen fecha al final.
++     * Devuelve las tareas vencidas según la regla del dominio (Task.estaVencida()).
++     * Ordena por fecha ascendente usando la estrategia POR_FECHA.
 +     */
-+    // ==================== S6 D├¡a 2: listados nuevos ====================
-+    // La lista la fija el mock: aqu├¡ se prueba que la RUTA llega al m├®todo nuevo (200, no el 400 de
-+    // /tasks/{id}) y que el JSON trae los campos del TaskResponse. El orden se prueba en TaskServiceTest.
-+    // ==================== S6 D├¡a 2: listados de vencidas y sin responsable ====================
-+            // El repositorio las entrega como 1, 5: sin el .sorted(TaskOrders.POR_FECHA) este assert falla.
-+            // Estados mezclados a prop├│sito (TODO, IN_PROGRESS, DONE): la regla es solo el responsable.
-+            // El repositorio las entrega como 1, 3, 4: sin el .sorted(TaskOrders.POR_FECHA) este assert falla.
-+    /** Fabrica una Task REAL con estado, responsable y fecha a elecci├│n (null = sin responsable / sin fecha). */
++    // ==================== GET (contra el stub del service, no una semilla) ====================
 
 MUTANTE: quitado .sorted(TaskOrders.POR_FECHA) de vencidas()
 
-[ERROR] [7mTests run: 11, Failures: 1, Errors: 0, Skipped: 0[0m
-[INFO] [7mBUILD[0m FAILURE
+[ERROR] Tests run: 8, Failures: 1, Errors: 0, Skipped: 0
+[INFO] BUILD FAILURE
 RESTAURADO: TaskService.java quedó exactamente como estaba.
 
 
-+            description = "Tareas con fecha pasada que no est├ín DONE (Task.[7mestaVencida[0m()), por dueDate ascendente.")
-+     * dominio, Task.[7mestaVencida[0m(); el orden, TaskOrders.POR_FECHA: la m├ís vencida primero.
-+                .filter(Task::[7mestaVencida[0m)
-+                .sorted(TaskOrders.[7mPOR_FECHA[0m)
-+     * D├¡a 2). La regla es ReportService.SIN_ASIGNAR; el orden, TaskOrders.[7mPOR_FECHA[0m: por fecha
-+                .sorted(TaskOrders.[7mPOR_FECHA[0m)
++                    .andExpect(jsonPath("$[1].title").value("Reciente"));
 
 
-[INFO] [7mTests run: 73, Failures: 0, Errors: 0, Skipped: 0[0m
-[INFO] [7mBUILD[0m SUCCESS
-
-38	0	src/test/java/com/taskflow/slice/TaskControllerTest.java
-69	0	src/test/java/com/taskflow/unit/TaskServiceTest.java
-
-+    /** GET /tasks/overdue — tareas vencidas de todos los proyectos, la más vencida primero (S6 Día 2). */
-+    /** GET /tasks/unassigned — tareas sin responsable, por dueDate ascendente y sin fecha al final (S6 Día 2). */
-+    /**
-+     * Tareas vencidas de todos los proyectos (GET /tasks/overdue, S6 Día 2). La regla es la del
-+     * dominio, Task.estaVencida(); el orden, TaskOrders.POR_FECHA: la más vencida primero.
-+     */
-+    /**
-+     * Tareas sin responsable de todos los proyectos, en cualquier estado (GET /tasks/unassigned, S6
-+     * Día 2). La regla es ReportService.SIN_ASIGNAR; el orden, TaskOrders.POR_FECHA: por fecha
-+     * ascendente y las que no tienen fecha al final.
-+     */
-+    // ==================== S6 Día 2: listados nuevos ====================
-+    // La lista la fija el mock: aquí se prueba que la RUTA llega al método nuevo (200, no el 400 de
-+    // /tasks/{id}) y que el JSON trae los campos del TaskResponse.
-+    // ==================== S6 Día 2: listados de vencidas y sin responsable ====================
-+            // El repositorio las entrega como 1, 5: sin el .sorted(TaskOrders.POR_FECHA) este assert falla.
-+            // Estados mezclados a propósito (TODO, IN_PROGRESS, DONE): la regla es solo el responsable.
-+            // El repositorio las entrega como 1, 3, 4: sin el .sorted(TaskOrders.POR_FECHA) este assert falla.
-+    /** Fabrica una Task REAL con estado, responsable y fecha a elección (null = sin responsable / sin fecha). */
++            description = "Lista de tareas cuya Task.estaVencida() es true. Orden por dueDate asc.")
++     * Devuelve las tareas vencidas según la regla del dominio (Task.estaVencida()).
++     * Ordena por fecha ascendente usando la estrategia POR_FECHA.
++                .filter(Task::estaVencida)
++                .sorted(TaskOrders.POR_FECHA)
 
 
-+    /** GET /tasks/overdue — tareas vencidas de todos los proyectos, la más vencida primero (S6 Día 2). */
-+    /** GET /tasks/unassigned — tareas sin responsable, por dueDate ascendente y sin fecha al final (S6 Día 2). */
-+    /**
-+     * Tareas vencidas de todos los proyectos (GET /tasks/overdue, S6 Día 2). La regla es la del
-+     * dominio, Task.estaVencida(); el orden, TaskOrders.POR_FECHA: la más vencida primero.
-+     */
-+    /**
-+     * Tareas sin responsable de todos los proyectos, en cualquier estado (GET /tasks/unassigned, S6
-+     * Día 2). La regla es ReportService.SIN_ASIGNAR; el orden, TaskOrders.POR_FECHA: por fecha
-+     * ascendente y las que no tienen fecha al final.
-+     */
-+    // ==================== S6 Día 2: listados nuevos ====================
-+    // La lista la fija el mock: aquí se prueba que la RUTA llega al método nuevo (200, no el 400 de
-+    // /tasks/{id}) y que el JSON trae los campos del TaskResponse.
-+    // ==================== S6 Día 2: listados de vencidas y sin responsable ====================
-+            // El repositorio las entrega como 1, 5: sin el .sorted(TaskOrders.POR_FECHA) este assert falla.
-+            // Estados mezclados a propósito (TODO, IN_PROGRESS, DONE): la regla es solo el responsable.
-+            // El repositorio las entrega como 1, 3, 4: sin el .sorted(TaskOrders.POR_FECHA) este assert falla.
-+    /** Fabrica una Task REAL con estado, responsable y fecha a elección (null = sin responsable / sin fecha). */
-
-MUTANTE: quitado .sorted(TaskOrders.POR_FECHA) de vencidas()
-
-[ERROR] [7mTests run: 11, Failures: 1, Errors: 0, Skipped: 0[0m
-[INFO] [7mBUILD[0m FAILURE
-RESTAURADO: TaskService.java quedó exactamente como estaba.
+[INFO] Tests run: 69, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
 
 
-[INFO] [7mTests run: 73, Failures: 0, Errors: 0, Skipped: 0[0m
-[INFO] [7mBUILD[0m SUCCESS
++                    .andExpect(jsonPath("$[1].title").value("Reciente"));
+
+
+[INFO] Tests run: 69, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
 
