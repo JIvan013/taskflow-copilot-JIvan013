@@ -166,11 +166,8 @@
     <profiles>
         <profile>
             <id>cobertura</id>
-            <!-- Activate JaCoCo only when explicitly requested to avoid instrumentation issues on some JDKs -->
             <activation>
-                <property>
-                    <name>cobertura</name>
-                </property>
+                <property><name>!m2e.version</name></property>
             </activation>
             <build>
                 <plugins>
